@@ -1,0 +1,50 @@
+name: Capture duet show video (12 slices)
+
+on:
+  push:
+    branches: [video-capture]
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    env:
+      SHOW: river-city-acappella
+      FRAMES: 2044
+      PARTS: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: video-build-dist
+          path: site
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: mkdir -p cap && cd cap && npm init -y >/dev/null && npm i playwright-core@1.64.1 >/dev/null && cp ../tools/capture/cap.mjs .
+      - run: (python3 -m http.server 8090 --bind 127.0.0.1 --directory site >/dev/null 2>&1 &) && sleep 2
+      - name: Capture frames
+        run: |
+          N=$(( (FRAMES + PARTS - 1) / PARTS ))
+          S=$(( ${{ matrix.part }} * N ))
+          E=$(( S + N )); [ $E -gt $FRAMES ] && E=$FRAMES
+          cd cap && URL="http://127.0.0.1:8090/?show=${SHOW}" node cap.mjs $S $E ../frames
+      - name: Encode slice
+        run: |
+          first=$(ls frames | head -1 | sed 's/f0*\([0-9]*\).jpg/\1/'); first=${first:-0}
+          ffmpeg -y -loglevel error -framerate 30 -start_number $first -i frames/f%05d.jpg -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p part.mp4
+          ls -la part.mp4
+      - name: Push slice
+        run: |
+          mkdir out && mv part.mp4 out/ && cd out
+          git init -q -b video-part-${{ matrix.part }}
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add part.mp4 && git commit -q -m "slice ${{ matrix.part }}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" video-part-${{ matrix.part }}
