@@ -35,17 +35,11 @@ jobs:
           S=$(( ${{ matrix.part }} * N ))
           E=$(( S + N )); [ $E -gt $FRAMES ] && E=$FRAMES
           cd cap && URL="http://127.0.0.1:8090/?show=${SHOW}" node cap.mjs $S $E ../frames
-      - name: Encode slice
-        run: |
-          command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg >/dev/null)
-          first=$(ls frames | head -1 | sed 's/f0*\([0-9]*\).jpg/\1/'); first=${first:-0}
-          ffmpeg -y -loglevel error -framerate 30 -start_number $first -i frames/f%05d.jpg -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p part.mp4
-          ls -la part.mp4
       - name: Push slice
         run: |
-          mkdir out && mv part.mp4 out/ && cd out
+          mv frames out && cd out
           git init -q -b video-part-${{ matrix.part }}
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add part.mp4 && git commit -q -m "slice ${{ matrix.part }}"
+          git add -A && git commit -q -m "slice ${{ matrix.part }}"
           git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" video-part-${{ matrix.part }}
