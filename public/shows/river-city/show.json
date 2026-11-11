@@ -1,0 +1,2 @@
+{ "title": "River City Morning", "audio": "mix.mp3", "bpm": 92, "downbeat": 0.3,
+  "voices": [{ "name": "Voice", "tele": "male.tele", "melody": "melody.json" }] }
