@@ -1,7 +1,7 @@
 { "title": "River City Morning (a cappella)", "audio": "mix.mp3", "bpm": 76, "downbeat": 0.3,
   "voices": [
     { "name": "Bass", "tele": "bass.tele", "melody": "bass.json" },
+    { "name": "Baritone", "tele": "baritone.tele", "melody": "baritone.json" },
     { "name": "Lead", "tele": "lead.tele", "melody": "lead.json" },
-    { "name": "Alto", "tele": "alto.tele", "melody": "alto.json" },
-    { "name": "Soprano", "tele": "soprano.tele", "melody": "soprano.json" }
+    { "name": "Tenor", "tele": "tenor.tele", "melody": "tenor.json" }
   ] }
