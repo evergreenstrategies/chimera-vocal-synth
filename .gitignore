@@ -10,3 +10,4 @@ src/wasm/chimera.wasm
 public/shows/*
 # except our own original song, written for this fork (no third-party rights involved)
 !public/shows/river-city/
+!public/shows/river-city-acappella/
