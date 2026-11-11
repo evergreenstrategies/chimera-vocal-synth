@@ -1,4 +1,4 @@
-{ "title": "River City Morning (a cappella)", "audio": "mix.mp3", "bpm": 92, "downbeat": 0.3,
+{ "title": "River City Morning (a cappella)", "audio": "mix.mp3", "bpm": 76, "downbeat": 0.3,
   "voices": [
     { "name": "Bass", "tele": "bass.tele", "melody": "bass.json" },
     { "name": "Lead", "tele": "lead.tele", "melody": "lead.json" },
